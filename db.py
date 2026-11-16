@@ -1,5 +1,5 @@
-# db.py
 import os
+import uuid
 from dotenv import load_dotenv
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import sessionmaker
@@ -17,7 +17,10 @@ if not DATABASE_URL.startswith("postgresql+asyncpg://"):
 engine = create_async_engine(
     DATABASE_URL,
     poolclass=NullPool,
-    connect_args={"statement_cache_size": 0},
+    connect_args={
+        "statement_cache_size": 0,
+        "prepared_statement_name_func": lambda: f"__asyncpg_{uuid.uuid4()}__",
+    },
     future=True,
 )
 
